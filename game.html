@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Unwound — Міні-гра «Злови медіатор»</title>
+    <link rel="stylesheet" href="style.css?v=1.2">
+    <style>
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: bold;
+            background: #ecf0f1;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        #game-area {
+            width: 100%;
+            height: 300px;
+            background-color: #1e272e;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        #target {
+            width: 55px;
+            height: 55px;
+            background-color: #f39c12;
+            color: #000;
+            font-weight: bold;
+            border-radius: 50%;
+            position: absolute;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 0 12px #f1c40f;
+        }
+
+        .start-btn {
+            margin-top: 15px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .start-btn:hover {
+            background-color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <ul>
+                <li><a href="index.html">Головна</a></li>
+                <li><a href="schedule.html">Розклад концертів</a></li>
+                <li><a href="about.html">Про гурт</a></li>
+                <li><a href="animation.html">Анімація (ЛР 5)</a></li>
+                <li><a href="game.html">Міні-гра (Бонус)</a></li>
+            </ul>
+        </nav>
+
+        <h1>Міні-гра: Злови сценічний медіатор Unwound!</h1>
+        <p>Натисніть «Почати гру» та клікайте по золотому медіатору, поки не вийшов час.</p>
+
+        <div class="game-info">
+            <span>Рахунок: <span id="score">0</span></span>
+            <span>Залишилось часу: <span id="timer">15</span> сек</span>
+        </div>
+
+        <div id="game-area">
+            <div id="target" onclick="hitTarget()">🎸</div>
+        </div>
+
+        <button class="start-btn" onclick="startGame()">Почати гру</button>
+
+        <footer>
+            <p>&copy; 2026 Unwound Tour. Всі права захищені.</p>
+        </footer>
+    </div>
+
+    <script>
+        let score = 0;
+        let timeLeft = 15;
+        let gameTimer = null;
+        let moveTimer = null;
+
+        const target = document.getElementById("target");
+        const gameArea = document.getElementById("game-area");
+        const scoreDisplay = document.getElementById("score");
+        const timerDisplay = document.getElementById("timer");
+
+        // Переміщення цілі у випадкову точку поля
+        function moveTarget() {
+            const maxX = gameArea.clientWidth - 60;
+            const maxY = gameArea.clientHeight - 60;
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            target.style.left = randomX + "px";
+            target.style.top = randomY + "px";
+        }
+
+        // Обробка кліку по цілі
+        function hitTarget() {
+            score++;
+            scoreDisplay.innerHTML = score;
+            moveTarget();
+        }
+
+        // Запуск нової гри
+        function startGame() {
+            clearInterval(gameTimer);
+            clearInterval(moveTimer);
+
+            score = 0;
+            timeLeft = 15;
+            scoreDisplay.innerHTML = score;
+            timerDisplay.innerHTML = timeLeft;
+
+            target.style.display = "flex";
+            moveTarget();
+
+            // Ціль змінює позицію кожні 900 мс
+            moveTimer = setInterval(moveTarget, 900);
+
+            // Зворотний відлік таймера
+            gameTimer = setInterval(function() {
+                timeLeft--;
+                timerDisplay.innerHTML = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(gameTimer);
+                    clearInterval(moveTimer);
+                    target.style.display = "none";
+                    alert("Гру завершено! Ваш результат: " + score + " очок.");
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

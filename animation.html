@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Unwound — Інтерактивна анімація (JS)</title>
+    <link rel="stylesheet" href="style.css?v=1.2">
+    <style>
+        /* Стилі для сцени та анімованого елемента */
+        .stage {
+            width: 100%;
+            height: 220px;
+            background-color: #222222;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 2px solid #3498db;
+        }
+
+        #guitar-pick {
+            width: 70px;
+            height: 70px;
+            background-color: #e74c3c;
+            color: #ffffff;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            position: absolute;
+            top: 75px;
+            left: 10px;
+            user-select: none;
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .controls button {
+            padding: 10px 18px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #2c3e50;
+            color: white;
+            transition: background-color 0.2s;
+        }
+
+        .controls button:hover {
+            background-color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Блок навігації -->
+        <nav>
+            <ul>
+                <li><a href="index.html">Головна</a></li>
+                <li><a href="schedule.html">Розклад концертів</a></li>
+                <li><a href="about.html">Про гурт</a></li>
+                <li><a href="animation.html">Анімація (ЛР 5)</a></li>
+                <li><a href="game.html">Міні-гра (Бонус)</a></li>
+            </ul>
+        </nav>
+
+        <h1>Інтерактивна сцена туру Unwound</h1>
+        <p>Керуйте рухом та виглядом сценічного прожектора за допомогою кнопок нижче:</p>
+
+        <!-- Контейнер для анімації -->
+        <div class="stage" id="stage">
+            <div id="guitar-pick">LIVE</div>
+        </div>
+
+        <!-- Кнопки керування анімацією -->
+        <div class="controls">
+            <button onclick="startAnimation()">▶ Старт руху</button>
+            <button onclick="stopAnimation()">⏸ Пауза</button>
+            <button onclick="changeColor()">🎨 Змінити колір</button>
+            <button onclick="resetAnimation()">🔄 Скинути</button>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Unwound Tour. Всі права захищені.</p>
+        </footer>
+    </div>
+
+    <!-- Вбудований JavaScript-код -->
+    <script>
+        // Отримуємо посилання на HTML-елементи за їх ID
+        const element = document.getElementById("guitar-pick");
+        const stage = document.getElementById("stage");
+
+        // Змінні стану анімації
+        let posX = 10;          // Поточна координата X
+        let direction = 1;      // Напрямок руху (1 — вправо, -1 — вліво)
+        let angle = 0;          // Кут повороту
+        let animationId = null; // Ідентифікатор таймера анімації
+
+        // Функція одного кадру анімації
+        function moveStep() {
+            const maxRight = stage.clientWidth - element.offsetWidth - 10;
+            
+            posX += 4 * direction;
+            angle += 5 * direction;
+
+            // Зміна напрямку при досягненні країв сцени
+            if (posX >= maxRight) {
+                direction = -1;
+            } else if (posX <= 10) {
+                direction = 1;
+            }
+
+            // Застосування нових CSS-координат та обертання
+            element.style.left = posX + "px";
+            element.style.transform = "rotate(" + angle + "deg)";
+        }
+
+        // Запуск анімації
+        function startAnimation() {
+            if (animationId === null) {
+                animationId = setInterval(moveStep, 20); // Оновлення кожні 20 мс
+            }
+        }
+
+        // Зупинка анімації
+        function stopAnimation() {
+            clearInterval(animationId);
+            animationId = null;
+        }
+
+        // Зміна кольору елемента
+        function changeColor() {
+            const colors = ["#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6"];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            element.style.backgroundColor = randomColor;
+        }
+
+        // Повернення у початковий стан
+        function resetAnimation() {
+            stopAnimation();
+            posX = 10;
+            angle = 0;
+            direction = 1;
+            element.style.left = posX + "px";
+            element.style.transform = "rotate(0deg)";
+            element.style.backgroundColor = "#e74c3c";
+        }
+    </script>
+</body>
+</html>
